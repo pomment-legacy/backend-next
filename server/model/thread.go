@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/pomment/backend-next/server/dao"
 	"sort"
 )
@@ -45,6 +46,15 @@ func InitThreads() (err error) {
 	return err
 }
 
+func SaveThreads() (err error) {
+	rawData, err := json.Marshal(Threads)
+	if err != nil {
+		return err
+	}
+	err = dao.Write("index.json", string(rawData))
+	return err
+}
+
 func GetThread(url string) (data *Thread, err error) {
 	err = InitThreads()
 	if err != nil {
@@ -67,4 +77,21 @@ func GetThreads() (data *ThreadList, err error) {
 	}
 	sort.Sort(sort.Reverse(list))
 	return &list, nil
+}
+
+func SetThread(url string, title string) (err error) {
+	err = InitThreads()
+	if err != nil {
+		return err
+	}
+
+	// https://stackoverflow.com/questions/2050391/how-to-check-if-a-map-contains-a-key-in-go
+	if data, ok := Threads[url]; ok {
+		data.Title = title
+		Threads[url] = data
+		err = SaveThreads()
+		return err
+	}
+
+	return errors.New("thread not found")
 }

@@ -7,11 +7,6 @@ import (
 )
 
 func GetThreads(c *gin.Context) {
-	if !utils.Verify(c) {
-		c.JSON(403, utils.FailureRes(utils.MsgBadToken))
-		return
-	}
-
 	thread, err := model.GetThreads()
 	if err != nil {
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
@@ -22,11 +17,6 @@ func GetThreads(c *gin.Context) {
 }
 
 func GetThread(c *gin.Context) {
-	if !utils.Verify(c) {
-		c.JSON(403, utils.FailureRes(utils.MsgBadToken))
-		return
-	}
-
 	url := c.Query("url")
 	if url == "" {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
@@ -40,4 +30,26 @@ func GetThread(c *gin.Context) {
 	}
 
 	c.JSON(200, utils.SuccessRes(thread))
+}
+
+type SetThreadArgs struct {
+	Url string `json:"url"`
+	Title string `json:"title"`
+}
+
+func SetThread(c *gin.Context) {
+	args := SetThreadArgs{}
+	err := c.BindJSON(&args)
+	if err != nil {
+		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
+		return
+	}
+
+	err = model.SetThread(args.Url, args.Title)
+	if err != nil {
+		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
+		return
+	}
+
+	c.JSON(200, utils.SuccessRes(nil))
 }
