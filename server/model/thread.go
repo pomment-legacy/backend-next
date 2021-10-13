@@ -13,7 +13,7 @@ type Thread struct {
 	Title        string `json:"title"`
 	FirstPostAt  int64  `json:"firstPostAt"`
 	LatestPostAt int64  `json:"latestPostAt"`
-	Amount       int    `json:"amount"`
+	Amount       int64  `json:"amount"`
 }
 
 type ThreadList []Thread
@@ -88,6 +88,23 @@ func SetThread(url string, title string) (err error) {
 	// https://stackoverflow.com/questions/2050391/how-to-check-if-a-map-contains-a-key-in-go
 	if data, ok := Threads[url]; ok {
 		data.Title = title
+		Threads[url] = data
+		err = SaveThreads()
+		return err
+	}
+
+	return errors.New("thread not found")
+}
+
+func UpdateThreadStatus(url string, latestPostAt int64, amount int64) (err error) {
+	err = InitThreads()
+	if err != nil {
+		return err
+	}
+
+	if data, ok := Threads[url]; ok {
+		data.LatestPostAt = latestPostAt
+		data.Amount = amount
 		Threads[url] = data
 		err = SaveThreads()
 		return err

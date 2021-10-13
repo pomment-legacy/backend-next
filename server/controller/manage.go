@@ -53,3 +53,19 @@ func SetThread(c *gin.Context) {
 
 	c.JSON(200, utils.SuccessRes(nil))
 }
+
+func GetPosts(c *gin.Context) {
+	url := c.Query("url")
+	if url == "" {
+		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
+		return
+	}
+
+	posts, err := model.GetPosts(url)
+	if err != nil {
+		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
+		return
+	}
+
+	c.JSON(200, utils.SuccessRes(posts))
+}
