@@ -12,13 +12,16 @@ type IncData struct {
 
 func Init(engine *gin.Engine, prefix string) {
 	r := engine
-	group := r.Group(prefix, middleware.Verify)
+	group := r.Group(prefix)
 	{
-		group.GET("manage/getThreads", controller.GetThreads)
-		group.GET("manage/getThread", controller.GetThread)
-		group.POST("manage/setThread", controller.SetThread)
-		group.GET("manage/getPosts", controller.GetPosts)
-		group.GET("manage/getPost", controller.GetPost)
-		group.POST("manage/setPost", controller.SetPost)
+		m := group.Group("manage", middleware.Verify)
+		{
+			m.GET("getThreads", controller.GetThreads)
+			m.GET("getThread", controller.GetThread)
+			m.POST("setThread", controller.SetThread)
+			m.GET("getPosts", controller.GetPosts)
+			m.GET("getPost", controller.GetPost)
+			m.POST("setPost", controller.SetPost)
+		}
 	}
 }

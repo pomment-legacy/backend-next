@@ -6,6 +6,8 @@ import (
 	"math/big"
 )
 
+// https://gist.github.com/dopey/c69559607800d2f2f90b1b1ed4e550fb
+
 // GenerateRandomBytes returns securely generated random bytes.
 // It will return an error if the system's secure random
 // number generator fails to function correctly, in which
