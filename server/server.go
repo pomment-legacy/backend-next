@@ -19,5 +19,6 @@ func Init(engine *gin.Engine, prefix string) {
 		group.POST("manage/setThread", controller.SetThread)
 		group.GET("manage/getPosts", controller.GetPosts)
 		group.GET("manage/getPost", controller.GetPost)
+		group.POST("manage/setPost", controller.SetPost)
 	}
 }
