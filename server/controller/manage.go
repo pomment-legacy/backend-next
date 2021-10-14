@@ -4,11 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pomment/backend-next/server/model"
 	"github.com/pomment/backend-next/server/utils"
+	"log"
 )
 
 func GetThreads(c *gin.Context) {
 	thread, err := model.GetThreads()
 	if err != nil {
+		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
 		return
 	}
@@ -25,6 +27,7 @@ func GetThread(c *gin.Context) {
 
 	thread, err := model.GetThread(url)
 	if err != nil {
+		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
 		return
 	}
@@ -47,6 +50,7 @@ func SetThread(c *gin.Context) {
 
 	err = model.SetThread(args.Url, args.Title)
 	if err != nil {
+		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
 		return
 	}
@@ -63,9 +67,28 @@ func GetPosts(c *gin.Context) {
 
 	posts, err := model.GetPosts(url)
 	if err != nil {
+		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
 		return
 	}
 
 	c.JSON(200, utils.SuccessRes(posts))
+}
+
+func GetPost(c *gin.Context) {
+	url := c.Query("url")
+	uuid := c.Query("uuid")
+	if url == "" || uuid == "" {
+		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
+		return
+	}
+
+	post, err := model.GetPost(url, uuid)
+	if err != nil {
+		log.Printf("Error: %s", err)
+		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
+		return
+	}
+
+	c.JSON(200, utils.SuccessRes(post))
 }

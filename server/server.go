@@ -18,6 +18,6 @@ func Init(engine *gin.Engine, prefix string) {
 		group.GET("manage/getThread", controller.GetThread)
 		group.POST("manage/setThread", controller.SetThread)
 		group.GET("manage/getPosts", controller.GetPosts)
-		group.GET("test", controller.Test)
+		group.GET("manage/getPost", controller.GetPost)
 	}
 }
