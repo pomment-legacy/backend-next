@@ -114,6 +114,66 @@ func SetPost(param SetPostParam) (data *Post, err error) {
 	return data, err
 }
 
+type SetSubPostParam struct {
+	*SetPostParam
+	ParentUUID string `json:"parentUUID"`
+}
+
+func SetSubPost(param SetSubPostParam) (data *Post, err error) {
+	data, posts, err := GetPost(param.Url, param.ParentUUID)
+	if err != nil {
+		return nil, err
+	}
+	var childItem *Post
+	var childIndex int
+	child := data.Child
+	for i, e := range child {
+		if e.UUID == param.UUID {
+			childItem = &e
+			childIndex = i
+			break
+		}
+	}
+	if childItem == nil {
+		return nil, errors.New("sub post not found")
+	}
+	childItem.Name = param.Name
+	childItem.Email = param.Email
+	childItem.Website = param.Website
+	childItem.Content = param.Content
+	childItem.Hidden = param.Hidden
+	childItem.ByAdmin = param.ByAdmin
+	childItem.ReceiveEmail = param.ReceiveEmail
+	childItem.Avatar = param.Avatar
+	if !param.PreserveUpdatedAt {
+		now := time.Now()
+		childItem.UpdatedAt = now.Unix() * 1000
+	}
+	if param.ResetEditKey {
+		childItem.EditKey = utils.GetEditKey()
+	}
+
+	// 定位子评论并写入
+	postItem := *data
+	postItem.Child[childIndex] = *childItem
+
+	// 定位父评论并写入
+	postList := *posts
+	target := -1
+	for i, _ := range postList {
+		if postList[i].UUID == param.ParentUUID {
+			target = i
+			break
+		}
+	}
+	if target < 0 {
+		return nil, errors.New("post not found when saving")
+	}
+	postList[target] = postItem
+	err = SavePosts(param.Url, postList)
+	return childItem, err
+}
+
 func SavePosts(url string, data []Post) (err error) {
 	rawData, err := json.Marshal(data)
 	if err != nil {

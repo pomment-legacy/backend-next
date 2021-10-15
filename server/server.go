@@ -22,6 +22,7 @@ func Init(engine *gin.Engine, prefix string) {
 			m.GET("getPosts", controller.GetPosts)
 			m.GET("getPost", controller.GetPost)
 			m.POST("setPost", controller.SetPost)
+			m.POST("setSubPost", controller.SetSubPost)
 		}
 	}
 }

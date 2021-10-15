@@ -96,12 +96,30 @@ func GetPost(c *gin.Context) {
 func SetPost(c *gin.Context) {
 	args := model.SetPostParam{}
 	err := c.BindJSON(&args)
-	if err != nil {
+	if err != nil || args.Url == "" || args.UUID == "" {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
 		return
 	}
 
 	data, err := model.SetPost(args)
+	if err != nil {
+		log.Printf("Error: %s", err)
+		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
+		return
+	}
+
+	c.JSON(200, utils.SuccessRes(data))
+}
+
+func SetSubPost(c *gin.Context) {
+	args := model.SetSubPostParam{}
+	err := c.BindJSON(&args)
+	if err != nil || args.Url == "" || args.UUID == "" || args.ParentUUID == "" {
+		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
+		return
+	}
+
+	data, err := model.SetSubPost(args)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
