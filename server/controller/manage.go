@@ -18,14 +18,19 @@ func GetThreads(c *gin.Context) {
 	c.JSON(200, utils.SuccessRes(thread))
 }
 
+type GetThreadParam struct {
+	Url string `json:"url"`
+}
+
 func GetThread(c *gin.Context) {
-	url := c.Query("url")
-	if url == "" {
+	data := GetThreadParam{}
+	err := c.BindJSON(&data)
+	if err != nil || data.Url == "" {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
 		return
 	}
 
-	thread, err := model.GetThread(url)
+	thread, err := model.GetThread(data.Url)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
@@ -35,13 +40,13 @@ func GetThread(c *gin.Context) {
 	c.JSON(200, utils.SuccessRes(thread))
 }
 
-type SetThreadArgs struct {
-	Url string `json:"url"`
+type SetThreadParam struct {
+	Url   string `json:"url"`
 	Title string `json:"title"`
 }
 
 func SetThread(c *gin.Context) {
-	args := SetThreadArgs{}
+	args := SetThreadParam{}
 	err := c.BindJSON(&args)
 	if err != nil {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
@@ -58,14 +63,19 @@ func SetThread(c *gin.Context) {
 	c.JSON(200, utils.SuccessRes(nil))
 }
 
+type GetPostsParam struct {
+	Url string `json:"url"`
+}
+
 func GetPosts(c *gin.Context) {
-	url := c.Query("url")
-	if url == "" {
+	data := GetPostsParam{}
+	err := c.BindJSON(&data)
+	if err != nil || data.Url == "" {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
 		return
 	}
 
-	posts, err := model.GetPosts(url)
+	posts, err := model.GetPosts(data.Url)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))
@@ -75,15 +85,20 @@ func GetPosts(c *gin.Context) {
 	c.JSON(200, utils.SuccessRes(posts))
 }
 
+type GetPostParam struct {
+	Url  string `json:"url"`
+	UUID string `json:"uuid"`
+}
+
 func GetPost(c *gin.Context) {
-	url := c.Query("url")
-	uuid := c.Query("uuid")
-	if url == "" || uuid == "" {
+	data := GetPostParam{}
+	err := c.BindJSON(&data)
+	if err != nil || data.Url == "" || data.UUID == "" {
 		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
 		return
 	}
 
-	post, _, err := model.GetPost(url, uuid)
+	post, _, err := model.GetPost(data.Url, data.UUID)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		c.JSON(500, utils.FailureRes(utils.MsgGeneralFailure))

@@ -17,10 +17,10 @@ func Init(engine *gin.Engine, prefix string) {
 		m := group.Group("manage", middleware.Verify)
 		{
 			m.GET("getThreads", controller.GetThreads)
-			m.GET("getThread", controller.GetThread)
+			m.POST("getThread", controller.GetThread)
 			m.POST("setThread", controller.SetThread)
-			m.GET("getPosts", controller.GetPosts)
-			m.GET("getPost", controller.GetPost)
+			m.POST("getPosts", controller.GetPosts)
+			m.POST("getPost", controller.GetPost)
 			m.POST("setPost", controller.SetPost)
 			m.POST("setSubPost", controller.SetSubPost)
 		}
