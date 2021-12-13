@@ -10,7 +10,8 @@ import (
 func Verify(c *gin.Context) {
 	session := sessions.Default(c)
 	username := session.Get("username")
-	if username == config.Content.SiteAdmin.Name {
+	salt := session.Get("salt")
+	if username == config.Content.SiteAdmin.Name && salt == config.Content.SiteAdmin.Salt {
 		c.Next()
 		return
 	}

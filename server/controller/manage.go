@@ -34,6 +34,7 @@ func Login(c *gin.Context) {
 	}
 	session := sessions.Default(c)
 	session.Set("username", config.Content.SiteAdmin.Name)
+	session.Set("salt", config.Content.SiteAdmin.Salt)
 	session.Save()
 
 	c.JSON(200, utils.SuccessRes(nil))
