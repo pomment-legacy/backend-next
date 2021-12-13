@@ -1,11 +1,43 @@
 package controller
 
 import (
+	"log"
+
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/pomment/backend-next/server/config"
 	"github.com/pomment/backend-next/server/model"
 	"github.com/pomment/backend-next/server/utils"
-	"log"
+	"golang.org/x/crypto/bcrypt"
 )
+
+type LoginParam struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func Login(c *gin.Context) {
+	args := &LoginParam{}
+	err := c.BindJSON(&args)
+	if err != nil {
+		c.JSON(400, utils.FailureRes(utils.MsgBadArgument))
+		return
+	}
+	if args.Username != config.Content.SiteAdmin.Name {
+		c.JSON(403, utils.FailureRes(utils.MsgBadLogin))
+		return
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(config.Content.SiteAdmin.Password), []byte(args.Password))
+	if err != nil {
+		c.JSON(403, utils.FailureRes(utils.MsgBadLogin))
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("username", config.Content.SiteAdmin.Name)
+	session.Save()
+
+	c.JSON(200, utils.SuccessRes(nil))
+}
 
 func GetThreads(c *gin.Context) {
 	thread, err := model.GetThreads()

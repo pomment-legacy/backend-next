@@ -1,16 +1,17 @@
 package utils
 
 type Response struct {
-	Success bool `json:"success"`
-	Message string `json:"message"`
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
 	Content interface{} `json:"content"`
 }
 
 const (
-	MsgBadArgument = "Bad Argument"
-	MsgBadToken = "Bad Token"
+	MsgBadArgument    = "Bad Argument"
+	MsgBadToken       = "Bad Token"
 	MsgGeneralFailure = "Server Failure"
-	MsgSuccess = "Success"
+	MsgSuccess        = "Success"
+	MsgBadLogin       = "Bad username or password"
 )
 
 func FailureRes(msg string) Response {

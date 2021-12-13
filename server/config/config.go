@@ -1,10 +1,11 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -15,6 +16,7 @@ type Config struct {
 		Name     string `yaml:"name"`
 		Email    string `yaml:"email"`
 		Password string `yaml:"password"`
+		Salt     string `yaml:"salt"`
 	} `yaml:"siteAdmin"`
 	ReCAPTCHA struct {
 		Enabled      bool    `yaml:"enabled"`
